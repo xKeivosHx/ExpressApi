@@ -22,7 +22,7 @@ const port = process.env.PORT || 3000;
 //Middleware nativo para recibir información en formato json
 app.use(express.json());
 
-const whitelist = ['http://localhost:8080', 'https://myapp.co'];
+const whitelist = ['http://localhost:8080', 'https://myapp.com'];
 var corsOptions = {
   origin: (origin, callback) => {
     if (whitelist.includes(origin) || !origin) {

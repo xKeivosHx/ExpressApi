@@ -1,10 +1,15 @@
 // Instacionamos a faker (generador de datos dummy)
 const faker = require('faker');
+const boom = require('@hapi/boom');
 
+const pool = require('../libs/postgres.pool');
 class UsersService {
   constructor() {
     this.users = [];
     this.generate();
+
+    this.pool = pool;
+    this.pool.on('error', (err) => console.error(err));
   }
 
   generate() {
@@ -30,8 +35,11 @@ class UsersService {
     return newUser;
   }
 
-  find() {
-    return this.users;
+  async find() {
+    const query = 'SELECT * FROM public.tasks';
+    const rta = await this.pool.query(query);
+
+    return rta.rows;
   }
 
   findOne(id) {

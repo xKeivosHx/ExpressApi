@@ -19,10 +19,14 @@ const service = new UsersService();
 });*/
 
 //Obetener usuarios
-router.get('/', (req, res) => {
-  const user = service.find();
+router.get('/', async (req, res, next) => {
+  try {
+    const users = await service.find();
 
-  res.json(user);
+    res.json(users);
+  } catch (error) {
+    next(error);
+  }
 });
 
 //Obtener un usuario

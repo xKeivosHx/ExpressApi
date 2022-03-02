@@ -13,10 +13,14 @@ const router = express.Router();
 const service = new ProductsService();
 
 //Lista de Productos
-router.get('/', async (request, response) => {
-  const products = await service.find();
+router.get('/', async (req, res, next) => {
+  try {
+    const products = await service.find();
 
-  response.json(products);
+    res.json(products);
+  } catch (error) {
+    next(error);
+  }
 });
 
 //Filtro de productos y se pone antes de un prod en especifico para no causar conflictos.
@@ -44,15 +48,15 @@ router.get(
 router.post(
   '/',
   validatorHandler(createProductSchema, 'body'),
-  async (request, response) => {
-    const body = request.body;
+  async (req, res, next) => {
+    try {
+      const body = req.body;
+      const newProduct = await service.create(body);
 
-    const newProduct = await service.create(body);
-
-    response.status(201).json({
-      message: 'created',
-      data: newProduct,
-    });
+      res.status(201).json(newProduct);
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
@@ -61,36 +65,33 @@ router.put(
   '/:id',
   validatorHandler(getProductSchema, 'params'),
   validatorHandler(updateProductSchema, 'body'),
-  async (request, response) => {
-    const { id } = request.params;
-    const body = request.body;
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
 
-    const product = await service.update(id, body);
+      const product = await service.update(id, body);
 
-    response.json({
-      id,
-      message: 'update',
-      data: product,
-    });
+      res.json(product);
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
 //Update parcial a producto (si se le manda solo un prop del json igual funciona)
 router.patch(
   '/:id',
+  validatorHandler(getProductSchema, 'params'),
   validatorHandler(updateProductSchema, 'body'),
-  async (request, response, next) => {
+  async (req, res, next) => {
     try {
-      const { id } = request.params;
-      const body = request.body;
+      const { id } = req.params;
+      const body = req.body;
 
       const product = await service.update(id, body);
 
-      response.json({
-        id,
-        message: 'partial update',
-        data: product,
-      });
+      res.json(product);
     } catch (error) {
       next(error);
     }
@@ -98,15 +99,15 @@ router.patch(
 );
 
 //Eliminar producto
-router.delete('/:id', async (request, response) => {
-  const { id } = request.params;
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await service.delete(id);
 
-  const product = await service.delete(id);
-
-  response.json({
-    product,
-    message: 'deleted',
-  });
+    res.status(201).json({ id });
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;

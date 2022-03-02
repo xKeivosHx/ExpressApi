@@ -2,6 +2,12 @@
 const express = require('express');
 
 const UsersService = require('./../services/users.service');
+const validatorHandler = require('./../middlewares/validatorHandler');
+const {
+  updateUserSchema,
+  createUserSchema,
+  getUserSchema,
+} = require('../schemas/user.schema');
 
 const router = express.Router();
 const service = new UsersService();
@@ -30,63 +36,87 @@ router.get('/', async (req, res, next) => {
 });
 
 //Obtener un usuario
-router.get('/:id', (req, res) => {
-  const { id } = req.params;
-  const user = service.findOne(id);
+router.get(
+  '/:id',
+  validatorHandler(getUserSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const user = await service.findOne(id);
 
-  res.json(user);
-});
+      res.json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 //Crear Nuevo Usuario
-router.post('/', (req, res) => {
-  const body = req.body;
+router.post(
+  '/',
+  validatorHandler(createUserSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const body = req.body;
+      const newUser = await service.create(body);
 
-  const newUser = service.create(body);
-
-  response.status(201).json({
-    message: 'created',
-    data: newUser,
-  });
-});
+      res.status(201).json(newUser);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 //Update al usuario
-router.put('/:id', (request, response) => {
-  const { id } = request.params;
-  const body = request.body;
+router.put(
+  '/:id',
+  validatorHandler(getUserSchema, 'params'),
+  validatorHandler(updateUserSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const updatedUser = await service.update(id, body);
 
-  const user = service.update(id, body);
-
-  response.json({
-    id,
-    message: 'update',
-    data: user,
-  });
-});
+      res.json(updatedUser);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 //Update parcial a usuario (si se le manda solo un prop del json igual funciona)
-router.patch('/:id', (request, response) => {
-  const { id } = request.params;
-  const body = request.body;
+router.patch(
+  '/:id',
+  validatorHandler(getUserSchema, 'params'),
+  validatorHandler(updateUserSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const updatedUser = await service.update(id, body);
 
-  const user = service.update(id, body);
-
-  response.json({
-    id,
-    message: 'partial update',
-    data: user,
-  });
-});
+      res.json(updatedUser);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 //Eliminar usuario
-router.delete('/:id', (request, response) => {
-  const { id } = request.params;
+router.delete(
+  '/:id',
+  validatorHandler(getUserSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await service.delete(id);
 
-  const user = service.delete(id);
-
-  response.json({
-    user,
-    message: 'deleted',
-  });
-});
+      res.status(201).json({ id });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 module.exports = router;

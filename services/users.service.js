@@ -3,6 +3,7 @@ const faker = require('faker');
 const boom = require('@hapi/boom');
 
 const { models } = require('./../libs/sequelize');
+const { use } = require('../routes/users.router');
 class UsersService {
   constructor() {
     this.users = [];
@@ -21,13 +22,8 @@ class UsersService {
     }
   }
 
-  create(data) {
-    const newUser = {
-      id: faker.datatype.uuid(),
-      ...data,
-    };
-
-    this.users.push(newUser);
+  async create(data) {
+    const newUser = await models.User.create(data);
 
     return newUser;
   }
@@ -38,36 +34,28 @@ class UsersService {
     return clients;
   }
 
-  findOne(id) {
-    return this.users.find((user) => (user.id = id));
-  }
+  async findOne(id) {
+    const user = await models.User.findByPk(id);
 
-  update(id, changes) {
-    const index = this.users.find((user) => user.id == id);
-
-    if (index == -1) {
-      throw new Error('User not found.');
+    if (!user) {
+      throw boom.notFound('Usuarío no encontrado');
     }
 
-    const user = this.users[index];
-    this.users[index] = {
-      ...user,
-      ...changes,
-    };
-
-    return this.user[index];
+    return user;
   }
 
-  deleteOne(id) {
-    const index = this.users.find((user) => user.id == id);
+  async update(id, changes) {
+    const user = await this.findOne(id);
+    const userUpdated = await user.update(changes);
 
-    if (index == -1) {
-      throw new Error('User not found.');
-    }
+    return userUpdated;
+  }
 
-    this.users.splice(index, 1);
+  async delete(id) {
+    const user = await this.findOne(id);
+    await user.destroy();
 
-    return id;
+    return { id };
   }
 }
 

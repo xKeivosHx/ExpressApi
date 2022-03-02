@@ -11,6 +11,7 @@ const {
   logErrors,
   errorHandler,
   boomErrorHandler,
+  ormErrorHandler,
 } = require('./middlewares/errorHandler');
 
 // creamos una aplicación
@@ -46,6 +47,7 @@ app.get('/', async (request, response, next) => {
 routerApi(app);
 
 app.use(logErrors);
+app.use(ormErrorHandler);
 app.use(boomErrorHandler);
 app.use(errorHandler);
 

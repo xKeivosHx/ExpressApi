@@ -40,13 +40,13 @@ const CustomerSchema = {
       key: 'id',
     },
     onUpdate: 'CASCADE',
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   },
 };
 
 class Customer extends Model {
   static associate(models) {
-    this.belongsTo(models.User, { foreignKey: 'user' });
+    this.belongsTo(models.User, { as: 'user' });
   }
 
   static config(sequelize) {

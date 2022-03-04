@@ -8,6 +8,7 @@ class CustomerService {
     const rta = await models.Customer.findAll({
       include: ['user'],
     });
+
     return rta;
   }
 
@@ -16,25 +17,27 @@ class CustomerService {
     if (!customer) {
       throw boom.notFound('customer not found');
     }
+
     return customer;
   }
 
   async create(data) {
-    const newCustomer = await models.Customer.create(data, {
-      include: ['user'],
-    });
+    const newCustomer = await models.Customer.create(data);
+
     return newCustomer;
   }
 
   async update(id, changes) {
     const customer = await this.findOne(id);
     const rta = await customer.update(changes);
+
     return rta;
   }
 
   async delete(id) {
     const customer = await this.findOne(id);
     await customer.destroy();
+
     return { rta: true };
   }
 }

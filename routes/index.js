@@ -15,7 +15,7 @@ function routerApi(app) {
   //Rutas
   router.use('/products', productsRouter);
   router.use('/users', usersRouter);
-  router.use('/category', categoriesRouter);
+  router.use('/categories', categoriesRouter);
   router.use('/customers', customersRouter);
 }
 

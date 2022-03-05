@@ -30,7 +30,7 @@ router.get('/filter', (request, response) => {
 
 //Obtiene producto en especifico por medio del id
 router.get(
-  '/:productId',
+  '/:id',
   validatorHandler(getProductSchema, 'params'),
   async (request, response, next) => {
     try {

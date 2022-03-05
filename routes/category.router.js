@@ -35,6 +35,9 @@ router.get(
   }
 );
 
+/*
+ * Crear Categoría
+ */
 router.post(
   '/',
   validatorHandler(createCategorySchema, 'body'),

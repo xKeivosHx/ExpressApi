@@ -7,6 +7,7 @@ class OrderService {
 
   async create(data) {
     const newOrder = await models.Order.create(data);
+
     return newOrder;
   }
 

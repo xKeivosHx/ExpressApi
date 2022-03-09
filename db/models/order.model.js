@@ -26,7 +26,7 @@ const OrderSchema = {
       key: 'id',
     },
     onUpdate: 'CASCADE',
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   },
 };
 
@@ -34,6 +34,13 @@ class Order extends Model {
   static associate(models) {
     this.belongsTo(models.Customer, {
       as: 'customer',
+    });
+
+    this.belongsToMany(models.Product, {
+      as: 'items',
+      through: models.OrderProduct,
+      foreignKey: 'orderId',
+      otherKey: 'productId',
     });
   }
 

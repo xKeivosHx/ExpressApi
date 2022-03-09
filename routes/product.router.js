@@ -5,6 +5,7 @@ const ProductsService = require('./../services/product.service');
 const validatorHandler = require('./../middlewares/validatorHandler');
 const {
   getProductSchema,
+  queryProductSchema,
   createProductSchema,
   updateProductSchema,
 } = require('./../schemas/product.schema');
@@ -13,15 +14,19 @@ const router = express.Router();
 const service = new ProductsService();
 
 //Lista de Productos
-router.get('/', async (req, res, next) => {
-  try {
-    const products = await service.find();
+router.get(
+  '/',
+  validatorHandler(queryProductSchema, 'query'),
+  async (req, res, next) => {
+    try {
+      const products = await service.find(req.query);
 
-    res.json(products);
-  } catch (error) {
-    next(error);
+      res.json(products);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 //Filtro de productos y se pone antes de un prod en especifico para no causar conflictos.
 router.get('/filter', (request, response) => {

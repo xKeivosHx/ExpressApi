@@ -27,6 +27,12 @@ class ProductsService {
       options.offset = parseInt(offset);
     }
 
+    const { price } = query;
+
+    if (price) {
+      options.where.price = Number(price);
+    }
+
     const { price_min, price_max } = query;
 
     if (price_min && price_max) {

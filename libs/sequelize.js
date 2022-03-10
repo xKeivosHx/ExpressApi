@@ -9,7 +9,7 @@ const options = {
 };
 
 if (config.isProd) {
-  options.ssl = {
+  options.dialectOptions = {
     rejectUnauthorized: false,
   };
 }

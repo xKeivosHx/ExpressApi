@@ -1,5 +1,6 @@
 'use strict';
 
+const { DataTypes, Sequelize } = require('sequelize');
 const { ORDER_TABLE } = require('../models/order.model');
 const { CUSTOMER_TABLE } = require('../models/customer.model');
 
